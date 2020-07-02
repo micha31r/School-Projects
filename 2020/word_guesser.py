@@ -10,12 +10,7 @@ class Player:
 	def action(self):
 		guess = input("Your Guess (1 letter):")[:1]
 		if guess:
-			if guess in self.guessed_letter:
-				print("Already Guessed")
-				guess = self.action()
-				return guess
-			else:
-				return guess
+			return guess
 		else:
 			print("Invalid Input (try again)")
 			guess = self.action()
@@ -34,7 +29,7 @@ class Player:
 
 class Game: 
 	def __init__(self,player_num):
-		self.word_list = ["apple","jehoon","computer","laptop"]
+		self.word_list = ["apple","michael","computer","laptop","window","important","quantum"]
 		self.chosen_word = random.choice(self.word_list)
 		self.entities = []
 		for i in range(player_num):
@@ -45,16 +40,25 @@ class Game:
 		print(f"This Word Have {len(self.chosen_word)} Letters")
 
 	def check(self,guess,player):
+		pos = []
 		for i in range(len(self.chosen_word)):
 			if guess == self.chosen_word[i]:
+				pos.append(i)
+		if not pos:
+			print("Wrong Guess")
+			print("You Gained 1 PENALTY")
+			player.penalties += 1	
+			return
+		for indice in pos:
+			if player.guessed_letter[indice] == "_":
 				print("Correct Guess")
 				print("You Gained 1 POINT")
-				player.guessed_letter[i] = guess
+				player.guessed_letter[indice] = guess
 				player.points += 1
-				return True
-		print("Wrong Guess")
-		print("You Gained 1 PENALTY")
-		player.penalties += 1	
+				return
+		print("Already Guessed")
+		guess = player.action()
+		self.check(guess,player)
 
 	def update(self):
 		for player in self.entities:
